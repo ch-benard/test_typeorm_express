@@ -1,4 +1,4 @@
-# Awesome Project Build with TypeORM
+# Test how to build a dynamic menu with TS, TypeORM and Express
 
 Steps to run this project:
 
