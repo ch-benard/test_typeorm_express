@@ -1,5 +1,7 @@
 # Test how to build a dynamic menu with TS, TypeORM and Express
 
+**Source**: [TypeScript Rest API with Express.js, JWT, Authorization Roles and TypeORM](https://medium.com/javascript-in-plain-english/creating-a-rest-api-with-jwt-authentication-and-role-based-authorization-using-typescript-fbfa3cab22a4)
+
 Steps to run this project:
 
 1. Run `npm i` command
