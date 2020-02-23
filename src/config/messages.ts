@@ -1,4 +1,24 @@
+export default
 {
+    "success" : 
+    {
+        "section":
+        {
+            "sectionCreated": "Section created",
+            "sectionDeletedSuccessfully": "Section was deleted successfully!",
+            "allSectionsDeletedSuccessfully": "All Sections were deleted successfully!"
+        },
+        "item":
+        {
+            "itemCreated": "Item created",
+            "itemDeletedSuccessfully": "Item was deleted successfully!",
+            "allItemsDeletedSuccessfully": "All Items were deleted successfully!"
+        },
+        "users":
+        {
+            "userCreated": "User created"
+        }
+    },
     "errors" : 
     {
         "general":
@@ -14,9 +34,7 @@
             "errorRetrievingSection": "Error retrieving Section with id ",
             "errorUpdatingSection": "Error updating Section with id ",
             "errorDeletingSectionWithId": "Could not delete Section with id ",
-            "sectionDeletedSuccessfully": "Section was deleted successfully!",
             "errorRemovingAllSections": "Some error occurred while removing all sections.",
-            "allSectionsDeletedSuccessfully": "All Sections were deleted successfully!"        
         },
         "item":
         {
@@ -31,9 +49,11 @@
             "errorRetrievingItem": "Error retrieving Item with id ",
             "errorUpdatingItem": "Error updating Item with id ",
             "errorDeletingItemWithId": "Could not delete Item with id ",
-            "itemDeletedSuccessfully": "Item was deleted successfully!",
             "errorRemovingAllItems": "Some error occurred while removing all items.",
-            "allItemsDeletedSuccessfully": "All Items were deleted successfully!"        
-        }        
+        },
+        "users":
+        {
+            "userNotFound": "User not found",
+        }
     }  
-}
+};

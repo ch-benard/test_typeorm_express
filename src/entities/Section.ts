@@ -1,5 +1,5 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
-
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinTable} from "typeorm";
+import { Item } from "./Item";
 @Entity()
 export class Section {
 
@@ -26,4 +26,7 @@ export class Section {
 
     @Column()
     status: number;
+
+    @OneToMany(type => Item, item => item.section)
+    items: Item[];
 }

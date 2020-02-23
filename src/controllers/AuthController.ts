@@ -8,13 +8,13 @@ import config from "../config/config";
 
 class AuthController {
   static login = async (req: Request, res: Response) => {
-    //Check if username and password are set
+    // Compruebe si username y contraseña tienen valor
     let { username, password } = req.body;
     if (!(username && password)) {
       res.status(400).send();
     }
 
-    //Get user from database
+    // Obtener los datos del user de la base de datos
     const userRepository = getRepository(User);
     let user: User;
     try {
@@ -23,34 +23,34 @@ class AuthController {
       res.status(401).send();
     }
 
-    //Check if encrypted password match
+    // Comprueba si la contraseña cifrada corresponde
     if (!user.checkIfUnencryptedPasswordIsValid(password)) {
       res.status(401).send();
       return;
     }
 
-    //Sing JWT, valid for 1 hour
+    // Signed JWT valido para 1 hour
     const token = jwt.sign(
       { userId: user.id, username: user.username },
       config.jwtSecret,
       { expiresIn: "1h" }
     );
 
-    //Send the jwt in the response
+    // Enviar el jwt el la respuesta
     res.send(token);
   };
 
   static changePassword = async (req: Request, res: Response) => {
-    //Get ID from JWT
+    // Obtener ID del JWT
     const id = res.locals.jwtPayload.userId;
 
-    //Get parameters from the body
+    // Obtener parametros del body
     const { oldPassword, newPassword } = req.body;
     if (!(oldPassword && newPassword)) {
       res.status(400).send();
     }
 
-    //Get user from the database
+    // Obtener user de la base de datos
     const userRepository = getRepository(User);
     let user: User;
     try {
@@ -59,20 +59,20 @@ class AuthController {
       res.status(401).send();
     }
 
-    //Check if old password matchs
+    // Compruebe si la contraseña anterior corresponde
     if (!user.checkIfUnencryptedPasswordIsValid(oldPassword)) {
       res.status(401).send();
       return;
     }
 
-    //Validate de model (password lenght)
+    // Validar el modelo (cantidad de caracteres en la contraseña)
     user.password = newPassword;
     const errors = await validate(user);
     if (errors.length > 0) {
       res.status(400).send(errors);
       return;
     }
-    //Hash the new password and save
+    // Hash la nueva contraseña y guardarla en la base de datos
     user.hashPassword();
     userRepository.save(user);
 

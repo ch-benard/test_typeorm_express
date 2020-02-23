@@ -3,43 +3,46 @@ import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 
 import { Item } from "../entities/Item";
+import msgs from "../config/messages";
 
 class ItemController{
 
     static listAll = async (req: Request, res: Response) => {
 
-        //Get items from database
+        // Obtener todos los items contenidos en la base de datos
         const itemRepository = getRepository(Item);
         const items = await itemRepository.find({
             select: ["id", "url", "name", "id_section", "position", "icon", "status"]
         });
 
-        //Send the items object
+        // Enviar el objeto items
         res.send(items);
     };
 
     static getOneById = async (req: Request, res: Response) => {
     
-        //Get the ID from the url
+        // Obtener el id contenido en el url
         const id: number = parseInt(req.params.id);
 
-        //Get the item from database
+        // Obtener el item
         const itemRepository = getRepository(Item);
 
         try {
     
             const item = await itemRepository.findOneOrFail(id, {
-                select: ["id", "url", "name", "id_section", "position", "icon", "status"] //We dont want to send the password on response
+                select: ["id", "url", "name", "id_section", "position", "icon", "status"]
             });
+            // Enviar el objeto item
+            res.send(item);
         } 
         catch (error) {
-            res.status(404).send("Item not found");
+            res.status(404).send(msgs.errors.item.itemNotFoundWithId + " " + id);
         }
     };
 
     static newItem = async (req: Request, res: Response) => {
 
-        //Get parameters from the body
+        // Obtener los datos contenidos en el body
         let { url, name, id_section, position, icon, status  } = req.body;
         let item = new Item();
         item.url = url;
@@ -49,48 +52,48 @@ class ItemController{
         item.icon  = icon ;
         item.status = status;
 
-        //Validade if the parameters are ok
+        // Validar los parametros
         const errors = await validate(item);
         if (errors.length > 0) {
             res.status(400).send(errors);
             return;
         }
 
-        //Try to save. If fails, the name is already in use
+        // Intenta guardar los datos.
         const itemRepository = getRepository(Item);
         try {
             await itemRepository.save(item);
         } 
         catch (e) {
-            res.status(409).send("name already in use");
+            res.status(409).send(e);
             return;
         }
 
-        //If all ok, send 201 response
-        res.status(201).send("Item created");
+        // Si todo está bien, envíar una respuesta 201
+        res.status(201).send(msgs.success.item.itemCreated);
     };
 
     static editItem = async (req: Request, res: Response) => {
 
-        //Get the ID from the url
+        // Obtener el ID contenido en el url
         const id = req.params.id;
 
-        //Get values from the body
+        // Obtener los datos contenidos en el body
         const { url, name, id_section, position, icon, status } = req.body;
 
-        //Try to find item on database
+        // Obtener el item
         const itemRepository = getRepository(Item);
         let item;
         try {
             item = await itemRepository.findOneOrFail(id);
         }
         catch (error) {
-            //If not found, send a 404 response
-            res.status(404).send("Item not found");
+            // Si no lo obtiene, enviar una error 404
+            res.status(404).send(msgs.errors.item.itemNotFoundWithId + " " + id);
             return;
         }
 
-        //Validate the new values on model
+        // Validar los nuevos valores en el modelo
         item.url = url;
         item.name = name;
         item.id_section = id_section;
@@ -104,21 +107,21 @@ class ItemController{
             return;
         }
 
-        //Try to safe, if fails, that means name already in use
+        // Intentar salvar los datos en la base de datos. 
         try {
             await itemRepository.save(item);
         }
         catch (e) {
-            res.status(409).send("name already in use");
+            res.status(409).send(e);
             return;
         }
-        //After all send a 204 (no content, but accepted) response
+        // Envíar una respuesta 204 (sin contenido, pero aceptada)
         res.status(204).send();
     };
 
     static deleteItem = async (req: Request, res: Response) => {
 
-        //Get the ID from the url
+        // Obtener el ID contenido en el url
         const id = req.params.id;
 
         const itemRepository = getRepository(Item);
@@ -128,12 +131,12 @@ class ItemController{
             item = await itemRepository.findOneOrFail(id);
         }
         catch (error) {
-            res.status(404).send("Item not found");
+            res.status(404).send(msgs.errors.item.itemNotFoundWithId + " " + id);
             return;
         }
         itemRepository.delete(id);
 
-        //After all send a 204 (no content, but accepted) response
+        // Envíar una respuesta 204 (sin contenido, pero aceptada)
         res.status(204).send();
     };
 };

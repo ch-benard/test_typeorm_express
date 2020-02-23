@@ -1,4 +1,5 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from "typeorm";
+import { Section } from "./Section";
 
 @Entity()
 export class Item {
@@ -23,4 +24,7 @@ export class Item {
 
     @Column()
     status: number;
+
+    @ManyToOne(type => Section, section => section.items)
+    section: Section;
 }

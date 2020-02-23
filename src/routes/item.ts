@@ -5,23 +5,23 @@ import { checkRole } from "../middlewares/checkRole";
 
 const router = Router();
 
-//Get all items
+// Ruta para obtener todos los items
 // router.get("/", [checkJwt, checkRole(["ADMIN"])], ItemController.listAll);
 router.get("/", ItemController.listAll);
 
-// Get one item
+// Ruta para obtener un item
 // router.get("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], ItemController.getOneById);
 router.get("/:id([0-9]+)", ItemController.getOneById);
 
-//Create a new item
+// Ruta para crear un nuevo item
 // router.post("/", [checkJwt, checkRole(["ADMIN"])], ItemController.newItem);
 router.post("/", ItemController.newItem);
 
-//Edit one item
+// Ruta para modificar los datos de un item
 // router.patch("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], ItemController.editItem);
 router.patch("/:id([0-9]+)", ItemController.editItem);
 
-//Delete one item
+// Ruta para borrar un item
 // router.delete("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], ItemController.deleteItem);
 router.delete("/:id([0-9]+)", ItemController.deleteItem);
 

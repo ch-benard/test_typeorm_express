@@ -5,10 +5,10 @@ import { User } from "../entities/User";
 
 export const checkRole = (roles: Array<string>) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    //Get the user ID from previous midleware
+    // Obtener el id del user ID del previo middleware 
     const id = res.locals.jwtPayload.userId;
 
-    //Get user role from the database
+    // Obtener el user role de la base de datos
     const userRepository = getRepository(User);
     let user: User;
     try {
@@ -17,7 +17,7 @@ export const checkRole = (roles: Array<string>) => {
       res.status(401).send();
     }
 
-    //Check if array of authorized roles includes the user's role
+    // Compruebe si la matriz de roles autorizados incluye el rol del usuario
     if (roles.indexOf(user.role) > -1) next();
     else res.status(401).send();
   };

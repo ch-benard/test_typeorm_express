@@ -1,45 +1,52 @@
 import { Request, Response } from "express";
+import { getConnection } from "typeorm";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 
 import { Section } from "../entities/Section";
+import msgs from "../config/messages";
 
 class SectionController{
 
     static listAll = async (req: Request, res: Response) => {
 
-        //Get sections from database
+        // Obtener todas las sections contenidas en la base de datos
         const sectionRepository = getRepository(Section);
         const sections = await sectionRepository.find({
             select: ["id", "id_system", "type", "name", "icon", "position", "parent", "status"]
         });
 
-        //Send the sections object
+        // Enviar el objeto sections
         res.send(sections);
     };
 
     static getOneById = async (req: Request, res: Response) => {
     
-        //Get the ID from the url
+        // Obtener el id contenido en el url
         const id: number = parseInt(req.params.id);
 
-        //Get the section from database
+        // Obtener el section
         const sectionRepository = getRepository(Section);
 
         try {
     
             const section = await sectionRepository.findOneOrFail(id, {
-                select: ["id", "id_system", "type", "name", "icon", "position", "parent", "status"]
+                select: ["id", "id_system", "type", "name", "icon", "position", "parent", "status"],
+                relations: ["items"]
             });
+            
+            // Enviar el objeto section
+            res.send(section);
         } 
         catch (error) {
-            res.status(404).send("Section not found");
+            console.log(error);
+            res.status(404).send(msgs.errors.section.sectionNotFoundWithId + " " + id);
         }
     };
 
     static newSection = async (req: Request, res: Response) => {
 
-        //Get parameters from the body
+        // Obtener los datos contenidos en el body
         let { id_system, type, name, icon, position, parent, status  } = req.body;
         let section = new Section();
         section.id_system = id_system;
@@ -50,48 +57,56 @@ class SectionController{
         section.parent = parent;
         section.status = status;
 
-        //Validade if the parameters are ok
+        // Validar los parametros
         const errors = await validate(section);
         if (errors.length > 0) {
             res.status(400).send(errors);
             return;
         }
 
-        //Try to save. If fails, the name is already in use
+        // Intenta guardar los datos.
         const sectionRepository = getRepository(Section);
         try {
             await sectionRepository.save(section);
         } 
         catch (e) {
-            res.status(409).send("name already in use");
+            res.status(409).send(e);
             return;
         }
 
-        //If all ok, send 201 response
-        res.status(201).send("Section created");
+        // Si todo está bien, envíar una respuesta 201
+        res.status(201).send(msgs.success.section.sectionCreated);
     };
 
     static editSection = async (req: Request, res: Response) => {
 
-        //Get the ID from the url
+        // Obtener el ID contenido en el url
         const id = req.params.id;
 
-        //Get values from the body
+        // Obtener los datos contenidos en el body
         const { id_system, type, name, icon, position, parent, status } = req.body;
 
-        //Try to find section on database
+        console.log("req.body contient:\n" + req.body);
+
+        // Obtener el section
         const sectionRepository = getRepository(Section);
         let section;
+
+        console.log("Recherche de la section " + id);
+
         try {
             section = await sectionRepository.findOneOrFail(id);
         }
         catch (error) {
-            //If not found, send a 404 response
-            res.status(404).send("Section not found");
+            // Si no lo obtiene, enviar una error 404
+            res.status(404).send(msgs.errors.section.sectionNotFoundWithId + " " + id);
             return;
         }
 
-        //Validate the new values on model
+        console.log("Section " + id + " trouvée");
+        console.log(section);
+
+        // Validar los nuevos valores en el modelo
         section.id_system = id_system;
         section.type = type;
         section.name = name;
@@ -100,27 +115,30 @@ class SectionController{
         section.parent = parent;
         section.status = status;
 
+        console.log("section with new values:");
+        console.log(section);
+
         const errors = await validate(section);
         if (errors.length > 0) {
             res.status(400).send(errors);
             return;
         }
 
-        //Try to safe, if fails, that means name already in use
+        // Intentar salvar los datos en la base de datos. 
         try {
             await sectionRepository.save(section);
         }
         catch (e) {
-            res.status(409).send("name already in use");
+            res.status(409).send(e);
             return;
         }
-        //After all send a 204 (no content, but accepted) response
+        // Envíar una respuesta 204 (sin contenido, pero aceptada)
         res.status(204).send();
     };
 
     static deleteSection = async (req: Request, res: Response) => {
 
-        //Get the ID from the url
+        // Obtener el ID contenido en el url
         const id = req.params.id;
 
         const sectionRepository = getRepository(Section);
@@ -130,12 +148,12 @@ class SectionController{
             section = await sectionRepository.findOneOrFail(id);
         }
         catch (error) {
-            res.status(404).send("Section not found");
+            res.status(404).send(msgs.errors.section.sectionNotFoundWithId + " " + id);
             return;
         }
         sectionRepository.delete(id);
 
-        //After all send a 204 (no content, but accepted) response
+        // Envíar una respuesta 204 (sin contenido, pero aceptada)
         res.status(204).send();
     };
 };
