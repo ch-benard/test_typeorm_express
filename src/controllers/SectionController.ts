@@ -10,7 +10,7 @@ class SectionController{
 
     static listAll = async (req: Request, res: Response) => {
 
-        // Obtener todas las sections contenidas en la base de datos
+        // Obtener todas las secciones contenidas en la base de datos
         const sectionRepository = getRepository(Section);
         const sections = await sectionRepository.find({
             select: ["id", "id_system", "type", "name", "icon", "position", "parent", "status"]
@@ -25,7 +25,7 @@ class SectionController{
         // Obtener el id contenido en el url
         const id: number = parseInt(req.params.id);
 
-        // Obtener el section
+        // Obtener la seccion
         const sectionRepository = getRepository(Section);
 
         try {
@@ -35,7 +35,7 @@ class SectionController{
                 relations: ["items"]
             });
             
-            // Enviar el objeto section
+            // Enviar el objeto <section>
             res.send(section);
         } 
         catch (error) {
@@ -86,9 +86,7 @@ class SectionController{
         // Obtener los datos contenidos en el body
         const { id_system, type, name, icon, position, parent, status } = req.body;
 
-        console.log("req.body contient:\n" + req.body);
-
-        // Obtener el section
+        // Obtener la seccion
         const sectionRepository = getRepository(Section);
         let section;
 
@@ -103,9 +101,6 @@ class SectionController{
             return;
         }
 
-        console.log("Section " + id + " trouvée");
-        console.log(section);
-
         // Validar los nuevos valores en el modelo
         section.id_system = id_system;
         section.type = type;
@@ -114,9 +109,6 @@ class SectionController{
         section.position = position;
         section.parent = parent;
         section.status = status;
-
-        console.log("section with new values:");
-        console.log(section);
 
         const errors = await validate(section);
         if (errors.length > 0) {

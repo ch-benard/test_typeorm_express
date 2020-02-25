@@ -19,7 +19,7 @@ router.post("/", ItemController.newItem);
 
 // Ruta para modificar los datos de un item
 // router.patch("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], ItemController.editItem);
-router.patch("/:id([0-9]+)", ItemController.editItem);
+router.put("/:id([0-9]+)", ItemController.editItem);
 
 // Ruta para borrar un item
 // router.delete("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], ItemController.deleteItem);

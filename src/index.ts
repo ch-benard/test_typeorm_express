@@ -2,10 +2,11 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import express from "express";
 import * as bodyParser from "body-parser";
-import * as helmet from "helmet";
-import * as cors from "cors";
+import helmet from "helmet";
+import cors from "cors";
 import routes from "./routes";
 import srvConfig from "./config/server-config";
+import logger from 'morgan';
 
 // connecta a la base de datos y crea una instancia de express
 createConnection()
@@ -14,10 +15,12 @@ createConnection()
     const app = express();
 
     // carga los midlewares
-    // app.use(cors());
-    // app.use(helmet());
-    app.use(bodyParser.json());
-
+    app.use(cors());
+    app.use(helmet());
+    // app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(logger('dev'));
+    
     // sube las rutas desde el directorio "routes"
     app.use("/", routes);
 

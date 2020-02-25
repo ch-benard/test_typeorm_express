@@ -19,7 +19,7 @@ router.post("/", UserController.newUser);
 
 // Ruta para modificar los datos de un user
 // router.patch("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], UserController.editUser);
-router.patch("/:id([0-9]+)", UserController.editUser);
+router.put("/:id([0-9]+)", UserController.editUser);
 
 // Ruta para borrar un user
 // router.delete("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], UserController.deleteUser);
